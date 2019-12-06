@@ -4,6 +4,146 @@ import (
 	"testing"
 )
 
+func TestEqual(t *testing.T) {
+	a := Split{
+		key:       "key3",
+		headerRow: []string{"column 1", "column 2", "column 3"},
+		rows: [][]string{
+			[]string{"key3", "value", "value"},
+			[]string{"key3", "value", "value"},
+			[]string{"key3", "value", "value"},
+		},
+	}
+	var b Split
+
+	if a.Equals(b) {
+		t.Errorf("Nil equality check failed.")
+	}
+
+	if !a.Equals(a) {
+		t.Errorf("Equality check failed")
+	}
+}
+
+func TestNotEqual(t *testing.T) {
+	a := Split{
+		key:       "key2",
+		headerRow: []string{"column 1", "column 2", "column 3"},
+		rows: [][]string{
+			[]string{"key3", "value", "value"},
+			[]string{"key3", "value", "value"},
+			[]string{"key3", "value", "value"},
+		},
+	}
+	b := Split{
+		key:       "key3",
+		headerRow: []string{"column 1", "column 2", "column 3"},
+		rows: [][]string{
+			[]string{"key3", "value", "value"},
+			[]string{"key3", "value", "value"},
+			[]string{"key3", "value", "value"},
+		},
+	}
+
+	if a.Equals(b) {
+		t.Errorf("key equality check failure.")
+	}
+
+	c := Split{
+		key:       "key3",
+		headerRow: []string{"column 5", "column 2", "column 3"},
+		rows: [][]string{
+			[]string{"key3", "value", "value"},
+			[]string{"key3", "value", "value"},
+			[]string{"key3", "value", "value"},
+		},
+	}
+
+	if a.Equals(c) {
+		t.Errorf("header row equality failure.")
+	}
+
+	d := Split{
+		key:       "key3",
+		headerRow: nil,
+		rows: [][]string{
+			[]string{"key3", "value", "value"},
+			[]string{"key3", "value", "value"},
+			[]string{"key3", "value", "value"},
+		},
+	}
+
+	if a.Equals(d) {
+		t.Errorf("header row equality failure.")
+	}
+
+	e := Split{
+		key:       "key3",
+		headerRow: []string{"column 1", "column 2"},
+		rows: [][]string{
+			[]string{"key3", "value"},
+			[]string{"key3", "value"},
+			[]string{"key3", "value"},
+		},
+	}
+
+	if a.Equals(e) {
+		t.Errorf("header row equality failure.")
+	}
+
+	f := Split{
+		key:       "key2",
+		headerRow: []string{"column 1", "column 2", "column 3"},
+		rows: [][]string{
+			[]string{"key3", "value", "value"},
+			[]string{"key3", "value", "value"},
+		},
+	}
+
+	if a.Equals(f) {
+		t.Errorf("row equality failure.")
+	}
+
+	g := Split{
+		key:       "key2",
+		headerRow: []string{"column 1", "column 2", "column 3"},
+		rows:      nil,
+	}
+
+	if a.Equals(g) {
+		t.Errorf("row equality failure.")
+	}
+
+	h := Split{
+		key:       "key2",
+		headerRow: []string{"column 1", "column 2", "column 3"},
+		rows: [][]string{
+			[]string{"key3", "value", "value"},
+			[]string{"key3", "value1", "value"},
+			[]string{"key3", "value", "value"},
+		},
+	}
+
+	if a.Equals(h) {
+		t.Errorf("row equality failure.")
+	}
+
+	i := Split{
+		key:       "key2",
+		headerRow: []string{"column 1", "column 2", "column 3"},
+		rows: [][]string{
+			[]string{"key3", "value", "value"},
+			[]string{"key3", "value"},
+			[]string{"key3", "value", "value"},
+		},
+	}
+
+	if a.Equals(i) {
+		t.Errorf("row equality failure.")
+	}
+
+}
+
 func TestSplitRowsWithHeaderRow(t *testing.T) {
 	inputWithHeaders := [][]string{
 		[]string{"column 1", "column 2", "column 3"},
@@ -18,8 +158,8 @@ func TestSplitRowsWithHeaderRow(t *testing.T) {
 		[]string{"key3", "value", "value"},
 	}
 
-	expectWithHeaders := []Split{
-		Split{
+	expectWithHeaders := map[string]Split{
+		"key3": Split{
 			key:       "key3",
 			headerRow: []string{"column 1", "column 2", "column 3"},
 			rows: [][]string{
@@ -28,7 +168,7 @@ func TestSplitRowsWithHeaderRow(t *testing.T) {
 				[]string{"key3", "value", "value"},
 			},
 		},
-		Split{
+		"key1": Split{
 			key:       "key1",
 			headerRow: []string{"column 1", "column 2", "column 3"},
 			rows: [][]string{
@@ -37,7 +177,7 @@ func TestSplitRowsWithHeaderRow(t *testing.T) {
 				[]string{"key1", "value", "value"},
 			},
 		},
-		Split{
+		"key2": Split{
 			key:       "key2",
 			headerRow: []string{"column 1", "column 2", "column 3"},
 			rows: [][]string{
@@ -64,8 +204,8 @@ func TestSplitRowsWithoutHeaderRow(t *testing.T) {
 		[]string{"key3", "value", "value"},
 	}
 
-	expectWithoutHeaders := []Split{
-		Split{
+	expectWithoutHeaders := map[string]Split{
+		"key3": Split{
 			key:       "key3",
 			headerRow: nil,
 			rows: [][]string{
@@ -74,7 +214,7 @@ func TestSplitRowsWithoutHeaderRow(t *testing.T) {
 				[]string{"key3", "value", "value"},
 			},
 		},
-		Split{
+		"key1": Split{
 			key:       "key1",
 			headerRow: nil,
 			rows: [][]string{
@@ -83,7 +223,7 @@ func TestSplitRowsWithoutHeaderRow(t *testing.T) {
 				[]string{"key1", "value", "value"},
 			},
 		},
-		Split{
+		"key2": Split{
 			key:       "key2",
 			headerRow: nil,
 			rows: [][]string{
@@ -97,7 +237,7 @@ func TestSplitRowsWithoutHeaderRow(t *testing.T) {
 	testSplitRows(t, inputWithoutHeaders, false, 0, expectWithoutHeaders)
 }
 
-func testSplitRows(t *testing.T, input [][]string, hasHeaderRows bool, keyColumn int, expect []Split) {
+func testSplitRows(t *testing.T, input [][]string, hasHeaderRows bool, keyColumn int, expect map[string]Split) {
 
 	got := SplitRows(input, hasHeaderRows, keyColumn)
 
@@ -107,53 +247,9 @@ func testSplitRows(t *testing.T, input [][]string, hasHeaderRows bool, keyColumn
 		t.Errorf("SplitRows return a result with length of %d.  Expected %d", len(got), len(expect))
 	} else {
 		for i, s := range expect {
-			if s.key != got[i].key {
-				t.Errorf(
-					"SplitRows([][]string): expect[%d].key != got[%d].key;  expected: %q, got: %q",
-					i, i, s.key, got[i].key)
+			if !s.Equals(got[i]) {
+				t.Errorf("expect[%s] != got[%s]", i, i)
 			}
-
-			if s.headerRow == nil && got[i].headerRow != nil {
-				t.Errorf("SplitRows([][]string): got[%d].headerRow is not nil.  Expected nil.", i)
-			} else if s.headerRow != nil && got[i].headerRow == nil {
-				t.Errorf("SplitRows([][]string): got[%d].headerRow is nil.  Expected non-nil value.", i)
-			} else if s.headerRow != nil && got[i].headerRow != nil {
-				for h, c := range s.headerRow {
-					if c != got[i].headerRow[h] {
-						t.Errorf(
-							"SplitRows([][]string): expect[%d].headerRow[%d] != got[%d].headerRow[%d]; expected: %q, got: %q",
-							i, h, i, h, c, got[i].headerRow[h],
-						)
-					}
-				}
-			}
-
-			if s.rows == nil && got[i].rows != nil {
-				t.Errorf(
-					"splitRows([][]string): got[%d].rows is not nil.  Expected nil.",
-					i,
-				)
-			} else if s.rows != nil && got[i].rows == nil {
-				t.Errorf(
-					"splitRows([][]string): got[%d].rows is nil.  Expected non-nil value.",
-					i,
-				)
-			} else if s.rows != nil && got[i].rows != nil {
-				for j, r := range s.rows {
-					if got[i].rows[j][keyColumn] != s.key {
-						t.Errorf("SplitRows([][]string): Key Column Does not match expected key value.")
-					}
-					for k, c := range r {
-						if c != got[i].rows[j][k] {
-							t.Errorf(
-								"splitRows([][]string): expect[%d].rows[%d][%d] != got[%d].rows[%d][%d]; expected: %q, got: %q",
-								i, j, k, i, j, k, c, got[i].rows[j][k],
-							)
-						}
-					}
-				}
-			}
-
 		}
 	}
 }
