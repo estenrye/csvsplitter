@@ -2,49 +2,49 @@ package csvsplitter
 
 // Split is a representation of a sub file
 type Split struct {
-	key       string
-	headerRow []string
-	rows      [][]string
+	Key       string
+	HeaderRow []string
+	Rows      [][]string
 }
 
 // Equals evaluates the value equality of a Split object
 func (a *Split) Equals(b Split) bool {
-	if a.key != b.key {
+	if a.Key != b.Key {
 		return false
 	}
 
-	if a.headerRow == nil && b.headerRow != nil {
+	if a.HeaderRow == nil && b.HeaderRow != nil {
 		return false
-	} else if a.headerRow != nil && b.headerRow == nil {
+	} else if a.HeaderRow != nil && b.HeaderRow == nil {
 		return false
-	} else if a.headerRow != nil && b.headerRow != nil {
-		if len(a.headerRow) != len(b.headerRow) {
+	} else if a.HeaderRow != nil && b.HeaderRow != nil {
+		if len(a.HeaderRow) != len(b.HeaderRow) {
 			return false
 		}
 
-		for i, column := range a.headerRow {
-			if column != b.headerRow[i] {
+		for i, column := range a.HeaderRow {
+			if column != b.HeaderRow[i] {
 				return false
 			}
 		}
 	}
 
-	if a.rows == nil && b.rows != nil {
+	if a.Rows == nil && b.Rows != nil {
 		return false
-	} else if a.rows != nil && b.rows == nil {
+	} else if a.Rows != nil && b.Rows == nil {
 		return false
-	} else if a.rows != nil && b.rows != nil {
-		if len(a.rows) != len(b.rows) {
+	} else if a.Rows != nil && b.Rows != nil {
+		if len(a.Rows) != len(b.Rows) {
 			return false
 		}
 
-		for i, row := range a.rows {
-			if len(row) != len(b.rows[i]) {
+		for i, row := range a.Rows {
+			if len(row) != len(b.Rows[i]) {
 				return false
 			}
 
 			for j, column := range row {
-				if column != b.rows[i][j] {
+				if column != b.Rows[i][j] {
 					return false
 				}
 			}
@@ -72,13 +72,13 @@ func SplitRows(rows [][]string, hasHeaderRows bool, keyColumn int) map[string]Sp
 
 		s, found := result[row[keyColumn]]
 		if found {
-			s.rows = append(s.rows, row)
+			s.Rows = append(s.Rows, row)
 			result[row[keyColumn]] = s
 		} else {
 			result[row[keyColumn]] = Split{
-				key:       row[keyColumn],
-				headerRow: headerRow,
-				rows:      [][]string{row},
+				Key:       row[keyColumn],
+				HeaderRow: headerRow,
+				Rows:      [][]string{row},
 			}
 		}
 	}
